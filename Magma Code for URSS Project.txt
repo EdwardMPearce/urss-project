@@ -1,0 +1,402 @@
+/* This code for Magma should allow the user to implement the finite subgroups E through L of SL(3,C)
+which are described in the classification given by S.Yau and Y.Yu in their 1993 work 
+Gorenstein Quotient Singularities in Dimension Three.
+It is hoped that the user may find this useful in case they wish to further study these
+particular groups. 
+For example, the McKay quiver of any of these groups (with respect to your favourite representation)
+can be computed with relative ease from the character table data.
+*/
+
+// Groups E, F, G as per Yau, Yu.
+K9<m> := CyclotomicField(9);
+// Constants om = exp(2*pi*i/3), ep = exp(4*pi*i/9)
+om := m^3;
+ep := m^2;
+GL3K := GeneralLinearGroup(3, K9);
+
+// Generators
+s := GL3K ! [1,0,0, 0,om,0, 0,0,om^2];
+t := GL3K ! [0,1,0, 0,0,1, 1,0,0];
+// Constant c = 1/sqrt(-3)
+c := 1/3 * (-1 - 2*om);
+v := GL3K ! [c,c,c, c,c*om,c*om^2, c,c*om^2,c*om];
+u := GL3K ! [ep,0,0, 0,ep,0, 0,0,ep*om];
+p := u*v*u^-1;
+
+// Hessian group of order 648
+G := MatrixGroup< 3, K9 | [s,t,v,u] >;
+// Group of order 216
+F := sub< G | [s,t,v,p] >;
+// Group of order 108
+E := sub< F | [s,t,v] >;
+
+/* Example - to demonstrate some useful functions to interrogate groups and their representations
+CharacterTable(E);
+NormalSubgroups(E);
+
+A5 := AlternatingGroup(5);
+CT := CharacterTable(A5);
+CT;
+CT[2];
+CT[2]*CT[2];
+Decomposition(CT, CT[2]*CT[2]);
+
+IrrMods := IrreducibleModules(F, CyclotomicField(12));
+ActionGenerators(IrrMods[6]);
+IsIsomorphic(F,ActionGroup(IrrMods[6]));
+*/
+
+// Groups H, J, L as per Yau, Yu.
+K15<m> := CyclotomicField(15);
+// Constants om = exp(2*pi*i/3), ep = exp(2*pi*i/5)
+om := m^5;
+ep := m^3;
+GL3K := GeneralLinearGroup(3, K15);
+
+// Generators
+s := GL3K ! [1,0,0, 0,ep^4,0, 0,0,ep];
+u := GL3K ! [-1,0,0, 0,0,-1, 0,-1,0];
+// Constant c = 1/sqrt(5)
+c := 1/5 * (1 + 2*ep + 2*ep^4);
+t := GL3K ! [c,c,c, 2*c,c*(ep^2 + ep^3),c*(ep + ep^4), 2*c,c*(ep + ep^4),c*(ep^2 + ep^3)];
+w := GL3K ! [om,0,0, 0,om,0, 0,0,om];
+// Constant d = sqrt(-3)
+d := -1 - 2*om; 
+v := GL3K ! [c,1/4 * (-c+d),1/4 * (-c+d), -1/2 *(c+d),c*(ep^2 + ep^3),c*(ep + ep^4), -1/2 *(c+d),c*(ep + ep^4),c*(ep^2 + ep^3)];
+
+// Simple group of order 60
+H := MatrixGroup< 3, K15 | [s,u,t] >;
+// Group of order 180
+J := MatrixGroup< 3, K15 | H,w >;
+// Group of order 1080
+L := MatrixGroup< 3, K15 | H,v >;
+
+// Groups I, K as per Yau, Yu.
+K21<m> := CyclotomicField(21);
+// Constants om = exp(2*pi*i/3), be = exp(2*pi*i/7)
+om := m^7;
+be := m^3;
+GL3K := GeneralLinearGroup(3, K21);
+
+// Generators
+s := GL3K ! [be,0,0, 0,be^2,0, 0,0,be^4];
+t := GL3K ! [0,1,0, 0,0,1, 1,0,0];
+// Constant c = -1/sqrt(-7)
+c := 1/7 * (be + be^2 + be^4 - be^3 - be^5 - be^6);
+r := GL3K ! [c*(be^4 - be^3),c*(be^2 - be^5),c*(be - be^6), c*(be^2 - be^5),c*(be - be^6),c*(be^4 - be^3), c*(be - be^6),c*(be^4 - be^3),c*(be^2 - be^5)];
+w := GL3K ! [om,0,0, 0,om,0, 0,0,om];
+
+// Simple group of order 168
+I := MatrixGroup< 3, K21 | [s,t,r] >;
+// Group of order 504
+K := MatrixGroup< 3, K21 | I,w >;
+
+/* For want of an appropriate 'for' loop one may use the code below to extract 
+ the decomposition of certain products of characters into their irreducible components.
+ One might imagine how else to fruitfully use this function.
+ This decomposition data for these groups has been collected in an accompanying Excel document, 
+ which should be cross referenced with the character tables for the groups which can be obtained 
+ using the CharacterTable() function (or else on another accompanying file).
+*/ 
+/*
+
+Decomposition(CT, CT[2]*CT[2]);
+Decomposition(CT, CT[2]*CT[3]);
+Decomposition(CT, CT[2]*CT[4]);
+Decomposition(CT, CT[2]*CT[5]);
+Decomposition(CT, CT[2]*CT[6]);
+Decomposition(CT, CT[2]*CT[7]);
+Decomposition(CT, CT[2]*CT[8]);
+Decomposition(CT, CT[2]*CT[9]);
+Decomposition(CT, CT[2]*CT[10]);
+Decomposition(CT, CT[2]*CT[11]);
+Decomposition(CT, CT[2]*CT[12]);
+Decomposition(CT, CT[2]*CT[13]);
+Decomposition(CT, CT[2]*CT[14]);
+Decomposition(CT, CT[2]*CT[15]);
+Decomposition(CT, CT[2]*CT[16]);
+Decomposition(CT, CT[2]*CT[17]);
+Decomposition(CT, CT[2]*CT[18]);
+Decomposition(CT, CT[2]*CT[19]);
+Decomposition(CT, CT[2]*CT[20]);
+Decomposition(CT, CT[2]*CT[21]);
+Decomposition(CT, CT[2]*CT[22]);
+Decomposition(CT, CT[2]*CT[23]);
+Decomposition(CT, CT[2]*CT[24]);
+
+Decomposition(CT, CT[3]*CT[3]);
+Decomposition(CT, CT[3]*CT[4]);
+Decomposition(CT, CT[3]*CT[5]);
+Decomposition(CT, CT[3]*CT[6]);
+Decomposition(CT, CT[3]*CT[7]);
+Decomposition(CT, CT[3]*CT[8]);
+Decomposition(CT, CT[3]*CT[9]);
+Decomposition(CT, CT[3]*CT[10]);
+Decomposition(CT, CT[3]*CT[11]);
+Decomposition(CT, CT[3]*CT[12]);
+Decomposition(CT, CT[3]*CT[13]);
+Decomposition(CT, CT[3]*CT[14]);
+Decomposition(CT, CT[3]*CT[15]);
+Decomposition(CT, CT[3]*CT[16]);
+Decomposition(CT, CT[3]*CT[17]);
+Decomposition(CT, CT[3]*CT[18]);
+Decomposition(CT, CT[3]*CT[19]);
+Decomposition(CT, CT[3]*CT[20]);
+Decomposition(CT, CT[3]*CT[21]);
+Decomposition(CT, CT[3]*CT[22]);
+Decomposition(CT, CT[3]*CT[23]);
+Decomposition(CT, CT[3]*CT[24]);
+
+Decomposition(CT, CT[4]*CT[4]);
+Decomposition(CT, CT[4]*CT[5]);
+Decomposition(CT, CT[4]*CT[6]);
+Decomposition(CT, CT[4]*CT[7]);
+Decomposition(CT, CT[4]*CT[8]);
+Decomposition(CT, CT[4]*CT[9]);
+Decomposition(CT, CT[4]*CT[10]);
+Decomposition(CT, CT[4]*CT[11]);
+Decomposition(CT, CT[4]*CT[12]);
+Decomposition(CT, CT[4]*CT[13]);
+Decomposition(CT, CT[4]*CT[14]);
+Decomposition(CT, CT[4]*CT[15]);
+Decomposition(CT, CT[4]*CT[16]);
+Decomposition(CT, CT[4]*CT[17]);
+Decomposition(CT, CT[4]*CT[18]);
+Decomposition(CT, CT[4]*CT[19]);
+Decomposition(CT, CT[4]*CT[20]);
+Decomposition(CT, CT[4]*CT[21]);
+Decomposition(CT, CT[4]*CT[22]);
+Decomposition(CT, CT[4]*CT[23]);
+Decomposition(CT, CT[4]*CT[24]);
+
+Decomposition(CT, CT[5]*CT[5]);
+Decomposition(CT, CT[5]*CT[6]);
+Decomposition(CT, CT[5]*CT[7]);
+Decomposition(CT, CT[5]*CT[8]);
+Decomposition(CT, CT[5]*CT[9]);
+Decomposition(CT, CT[5]*CT[10]);
+Decomposition(CT, CT[5]*CT[11]);
+Decomposition(CT, CT[5]*CT[12]);
+Decomposition(CT, CT[5]*CT[13]);
+Decomposition(CT, CT[5]*CT[14]);
+Decomposition(CT, CT[5]*CT[15]);
+Decomposition(CT, CT[5]*CT[16]);
+Decomposition(CT, CT[5]*CT[17]);
+Decomposition(CT, CT[5]*CT[18]);
+Decomposition(CT, CT[5]*CT[19]);
+Decomposition(CT, CT[5]*CT[20]);
+Decomposition(CT, CT[5]*CT[21]);
+Decomposition(CT, CT[5]*CT[22]);
+Decomposition(CT, CT[5]*CT[23]);
+Decomposition(CT, CT[5]*CT[24]);
+
+Decomposition(CT, CT[6]*CT[6]);
+Decomposition(CT, CT[6]*CT[7]);
+Decomposition(CT, CT[6]*CT[8]);
+Decomposition(CT, CT[6]*CT[9]);
+Decomposition(CT, CT[6]*CT[10]);
+Decomposition(CT, CT[6]*CT[11]);
+Decomposition(CT, CT[6]*CT[12]);
+Decomposition(CT, CT[6]*CT[13]);
+Decomposition(CT, CT[6]*CT[14]);
+Decomposition(CT, CT[6]*CT[15]);
+Decomposition(CT, CT[6]*CT[16]);
+Decomposition(CT, CT[6]*CT[17]);
+Decomposition(CT, CT[6]*CT[18]);
+Decomposition(CT, CT[6]*CT[19]);
+Decomposition(CT, CT[6]*CT[20]);
+Decomposition(CT, CT[6]*CT[21]);
+Decomposition(CT, CT[6]*CT[22]);
+Decomposition(CT, CT[6]*CT[23]);
+Decomposition(CT, CT[6]*CT[24]);
+
+Decomposition(CT, CT[7]*CT[7]);
+Decomposition(CT, CT[7]*CT[8]);
+Decomposition(CT, CT[7]*CT[9]);
+Decomposition(CT, CT[7]*CT[10]);
+Decomposition(CT, CT[7]*CT[11]);
+Decomposition(CT, CT[7]*CT[12]);
+Decomposition(CT, CT[7]*CT[13]);
+Decomposition(CT, CT[7]*CT[14]);
+Decomposition(CT, CT[7]*CT[15]);
+Decomposition(CT, CT[7]*CT[16]);
+Decomposition(CT, CT[7]*CT[17]);
+Decomposition(CT, CT[7]*CT[18]);
+Decomposition(CT, CT[7]*CT[19]);
+Decomposition(CT, CT[7]*CT[20]);
+Decomposition(CT, CT[7]*CT[21]);
+Decomposition(CT, CT[7]*CT[22]);
+Decomposition(CT, CT[7]*CT[23]);
+Decomposition(CT, CT[7]*CT[24]);
+
+Decomposition(CT, CT[8]*CT[8]);
+Decomposition(CT, CT[8]*CT[9]);
+Decomposition(CT, CT[8]*CT[10]);
+Decomposition(CT, CT[8]*CT[11]);
+Decomposition(CT, CT[8]*CT[12]);
+Decomposition(CT, CT[8]*CT[13]);
+Decomposition(CT, CT[8]*CT[14]);
+Decomposition(CT, CT[8]*CT[15]);
+Decomposition(CT, CT[8]*CT[16]);
+Decomposition(CT, CT[8]*CT[17]);
+Decomposition(CT, CT[8]*CT[18]);
+Decomposition(CT, CT[8]*CT[19]);
+Decomposition(CT, CT[8]*CT[20]);
+Decomposition(CT, CT[8]*CT[21]);
+Decomposition(CT, CT[8]*CT[22]);
+Decomposition(CT, CT[8]*CT[23]);
+Decomposition(CT, CT[8]*CT[24]);
+
+Decomposition(CT, CT[9]*CT[9]);
+Decomposition(CT, CT[9]*CT[10]);
+Decomposition(CT, CT[9]*CT[11]);
+Decomposition(CT, CT[9]*CT[12]);
+Decomposition(CT, CT[9]*CT[13]);
+Decomposition(CT, CT[9]*CT[14]);
+Decomposition(CT, CT[9]*CT[15]);
+Decomposition(CT, CT[9]*CT[16]);
+Decomposition(CT, CT[9]*CT[17]);
+Decomposition(CT, CT[9]*CT[18]);
+Decomposition(CT, CT[9]*CT[19]);
+Decomposition(CT, CT[9]*CT[20]);
+Decomposition(CT, CT[9]*CT[21]);
+Decomposition(CT, CT[9]*CT[22]);
+Decomposition(CT, CT[9]*CT[23]);
+Decomposition(CT, CT[9]*CT[24]);
+
+Decomposition(CT, CT[10]*CT[10]);
+Decomposition(CT, CT[10]*CT[11]);
+Decomposition(CT, CT[10]*CT[12]);
+Decomposition(CT, CT[10]*CT[13]);
+Decomposition(CT, CT[10]*CT[14]);
+Decomposition(CT, CT[10]*CT[15]);
+Decomposition(CT, CT[10]*CT[16]);
+Decomposition(CT, CT[10]*CT[17]);
+Decomposition(CT, CT[10]*CT[18]);
+Decomposition(CT, CT[10]*CT[19]);
+Decomposition(CT, CT[10]*CT[20]);
+Decomposition(CT, CT[10]*CT[21]);
+Decomposition(CT, CT[10]*CT[22]);
+Decomposition(CT, CT[10]*CT[23]);
+Decomposition(CT, CT[10]*CT[24]);
+
+Decomposition(CT, CT[11]*CT[11]);
+Decomposition(CT, CT[11]*CT[12]);
+Decomposition(CT, CT[11]*CT[13]);
+Decomposition(CT, CT[11]*CT[14]);
+Decomposition(CT, CT[11]*CT[15]);
+Decomposition(CT, CT[11]*CT[16]);
+Decomposition(CT, CT[11]*CT[17]);
+Decomposition(CT, CT[11]*CT[18]);
+Decomposition(CT, CT[11]*CT[19]);
+Decomposition(CT, CT[11]*CT[20]);
+Decomposition(CT, CT[11]*CT[21]);
+Decomposition(CT, CT[11]*CT[22]);
+Decomposition(CT, CT[11]*CT[23]);
+Decomposition(CT, CT[11]*CT[24]);
+
+Decomposition(CT, CT[12]*CT[12]);
+Decomposition(CT, CT[12]*CT[13]);
+Decomposition(CT, CT[12]*CT[14]);
+Decomposition(CT, CT[12]*CT[15]);
+Decomposition(CT, CT[12]*CT[16]);
+Decomposition(CT, CT[12]*CT[17]);
+Decomposition(CT, CT[12]*CT[18]);
+Decomposition(CT, CT[12]*CT[19]);
+Decomposition(CT, CT[12]*CT[20]);
+Decomposition(CT, CT[12]*CT[21]);
+Decomposition(CT, CT[12]*CT[22]);
+Decomposition(CT, CT[12]*CT[23]);
+Decomposition(CT, CT[12]*CT[24]);
+
+Decomposition(CT, CT[13]*CT[13]);
+Decomposition(CT, CT[13]*CT[14]);
+Decomposition(CT, CT[13]*CT[15]);
+Decomposition(CT, CT[13]*CT[16]);
+Decomposition(CT, CT[13]*CT[17]);
+Decomposition(CT, CT[13]*CT[18]);
+Decomposition(CT, CT[13]*CT[19]);
+Decomposition(CT, CT[13]*CT[20]);
+Decomposition(CT, CT[13]*CT[21]);
+Decomposition(CT, CT[13]*CT[22]);
+Decomposition(CT, CT[13]*CT[23]);
+Decomposition(CT, CT[13]*CT[24]);
+
+Decomposition(CT, CT[14]*CT[14]);
+Decomposition(CT, CT[14]*CT[15]);
+Decomposition(CT, CT[14]*CT[16]);
+Decomposition(CT, CT[14]*CT[17]);
+Decomposition(CT, CT[14]*CT[18]);
+Decomposition(CT, CT[14]*CT[19]);
+Decomposition(CT, CT[14]*CT[20]);
+Decomposition(CT, CT[14]*CT[21]);
+Decomposition(CT, CT[14]*CT[22]);
+Decomposition(CT, CT[14]*CT[23]);
+Decomposition(CT, CT[14]*CT[24]);
+
+Decomposition(CT, CT[15]*CT[15]);
+Decomposition(CT, CT[15]*CT[16]);
+Decomposition(CT, CT[15]*CT[17]);
+Decomposition(CT, CT[15]*CT[18]);
+Decomposition(CT, CT[15]*CT[19]);
+Decomposition(CT, CT[15]*CT[20]);
+Decomposition(CT, CT[15]*CT[21]);
+Decomposition(CT, CT[15]*CT[22]);
+Decomposition(CT, CT[15]*CT[23]);
+Decomposition(CT, CT[15]*CT[24]);
+
+Decomposition(CT, CT[16]*CT[16]);
+Decomposition(CT, CT[16]*CT[17]);
+Decomposition(CT, CT[16]*CT[18]);
+Decomposition(CT, CT[16]*CT[19]);
+Decomposition(CT, CT[16]*CT[20]);
+Decomposition(CT, CT[16]*CT[21]);
+Decomposition(CT, CT[16]*CT[22]);
+Decomposition(CT, CT[16]*CT[23]);
+Decomposition(CT, CT[16]*CT[24]);
+
+Decomposition(CT, CT[17]*CT[17]);
+Decomposition(CT, CT[17]*CT[18]);
+Decomposition(CT, CT[17]*CT[19]);
+Decomposition(CT, CT[17]*CT[20]);
+Decomposition(CT, CT[17]*CT[21]);
+Decomposition(CT, CT[17]*CT[22]);
+Decomposition(CT, CT[17]*CT[23]);
+Decomposition(CT, CT[17]*CT[24]);
+
+Decomposition(CT, CT[18]*CT[18]);
+Decomposition(CT, CT[18]*CT[19]);
+Decomposition(CT, CT[18]*CT[20]);
+Decomposition(CT, CT[18]*CT[21]);
+Decomposition(CT, CT[18]*CT[22]);
+Decomposition(CT, CT[18]*CT[23]);
+Decomposition(CT, CT[18]*CT[24]);
+
+Decomposition(CT, CT[19]*CT[19]);
+Decomposition(CT, CT[19]*CT[20]);
+Decomposition(CT, CT[19]*CT[21]);
+Decomposition(CT, CT[19]*CT[22]);
+Decomposition(CT, CT[19]*CT[23]);
+Decomposition(CT, CT[19]*CT[24]);
+
+Decomposition(CT, CT[20]*CT[20]);
+Decomposition(CT, CT[20]*CT[21]);
+Decomposition(CT, CT[20]*CT[22]);
+Decomposition(CT, CT[20]*CT[23]);
+Decomposition(CT, CT[20]*CT[24]);
+
+Decomposition(CT, CT[21]*CT[21]);
+Decomposition(CT, CT[21]*CT[22]);
+Decomposition(CT, CT[21]*CT[23]);
+Decomposition(CT, CT[21]*CT[24]);
+
+Decomposition(CT, CT[22]*CT[22]);
+Decomposition(CT, CT[22]*CT[23]);
+Decomposition(CT, CT[22]*CT[24]);
+
+Decomposition(CT, CT[23]*CT[23]);
+Decomposition(CT, CT[23]*CT[24]);
+
+Decomposition(CT, CT[24]*CT[24]);
+
+*/
