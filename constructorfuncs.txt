@@ -1,0 +1,135 @@
+/* This file contains source code for the Magma computer algebra system
+The code may be executed for free in the Magma calculator at http://magma.maths.usyd.edu.au/calc/
+This file contains three functions: SporadicGroupEFG(), SporadicGroupHJL(), and SporadicGroupIK()
+which construct the finite subgroups E,F,G,H,I,J,K,L of SL(3,C)
+which are described in the classification given by S.Yau and Y.Yu 
+in [Gorenstein Quotient Singularities in Dimension Three, 1993].
+*/
+
+function SporadicGroupEFG()
+  // Calling this function returns a list containing the three finite subgroups E, F, G of SL(3,C) 
+  // as per [S.Yau and Y.Yu, Gorenstein Quotient Singularities in Dimension Three, 1993]
+
+  // Initialises the base field, the cyclotomic field Q(m) 
+  // where m = exp(2*pi*i/9) is a primitive 9-th root of unity
+  K9<m> := CyclotomicField(9);
+
+  // Initialises constants om = exp(2*pi*i/3), ep = exp(4*pi*i/9)
+  om := m^3;
+  ep := m^2;
+
+  // Initialises constant c = 1/sqrt(-3)
+  c := 1/3 * (-1 - 2*om);
+
+  // Initialises the general linear group GL(3,K) with K = Q(m) as above
+  GL3K := GeneralLinearGroup(3, K9);
+
+  // Generators
+  // Here we specify the generators of the groups as matrix elements in SL(3,K)
+  // s is a diagonal matrix of order 3
+  s := GL3K ! [1,0,0, 0,om,0, 0,0,om^2];
+  // t is a permutation matrix of order 3
+  t := GL3K ! [0,1,0, 0,0,1, 1,0,0];
+  v := GL3K ! [c,c,c, c,c*om,c*om^2, c,c*om^2,c*om];
+  u := GL3K ! [ep,0,0, 0,ep,0, 0,0,ep*om];
+  p := u*v*u^-1;
+
+  // G is a Hessian group of order 648
+  G := MatrixGroup< 3, K9 | [s,t,v,u] >;
+
+  // F is a group of order 216
+  F := sub< G | [s,t,v,p] >;
+
+  // E is a group of order 108
+  E := sub< F | [s,t,v] >;
+  
+  // Note the subgroup structure: E subgroup F subgroup G
+  // These are all inclusions of normal subgroups
+  return [E, F, G];
+end function;
+
+function SporadicGroupHJL()
+  // Calling this function returns a list containing the three finite subgroups H, J, L of SL(3,C) 
+  // as per [S.Yau and Y.Yu, Gorenstein Quotient Singularities in Dimension Three, 1993]
+
+  // Initialises the base field, the cyclotomic field Q(m) 
+  // where m = exp(2*pi*i/15) is a primitive 15-th root of unity
+  K15<m> := CyclotomicField(15);
+
+  // Initialises constants om = exp(2*pi*i/3), ep = exp(2*pi*i/5)
+  om := m^5;
+  ep := m^3;
+  
+  // Initialises constants c = 1/sqrt(5), d = sqrt(-3)
+  c := 1/5 * (1 + 2*ep + 2*ep^4);
+  d := -1 - 2*om; 
+  
+  // Initialises the general linear group GL(3,K) with K = Q(m) as above  
+  GL3K := GeneralLinearGroup(3, K15);
+
+  // Generators
+  // Here we specify the generators of the groups as matrix elements in SL(3,K)
+  // s is a diagonal matrix of order 5
+  s := GL3K ! [1,0,0, 0,ep^4,0, 0,0,ep];
+  // u is a matrix of order 2, an involution
+  u := GL3K ! [-1,0,0, 0,0,-1, 0,-1,0];
+  t := GL3K ! [c,c,c, 2*c,c*(ep^2 + ep^3),c*(ep + ep^4), 2*c,c*(ep + ep^4),c*(ep^2 + ep^3)];
+  // w is a scalar diagonal matrix of order 3, w = om*Id_3
+  w := GL3K ! [om,0,0, 0,om,0, 0,0,om];
+  v := GL3K ! [c,1/4 * (-c+d),1/4 * (-c+d), -1/2 *(c+d),c*(ep^2 + ep^3),c*(ep + ep^4), -1/2 *(c+d),c*(ep + ep^4),c*(ep^2 + ep^3)];
+
+  // Simple group of order 60, representation of the alternating group on five letters A_5 as 
+  // orientation-preserving (rotational) symmetries of a regular icosahedron/dodecahedron,
+  // also isomorphic to PSL(2, F_5)
+  H := MatrixGroup< 3, K15 | [s,u,t] >;
+
+  // Group of order 180, isomorphic to the Cartesian product of A_5 and a cyclic group with 3 elements
+  J := MatrixGroup< 3, K15 | H,w >;
+
+  // Group of order 1080
+  L := MatrixGroup< 3, K15 | H,v >;
+
+  return [H, J, L];
+end function;
+
+function SporadicGroupIK()
+  // Calling this function returns a list containing the two finite subgroups I, K of SL(3,C) 
+  // as per [S.Yau and Y.Yu, Gorenstein Quotient Singularities in Dimension Three, 1993]
+
+  // Initialises the base field, the cyclotomic field Q(m) 
+  // where m = exp(2*pi*i/21) is a primitive 21-st root of unity
+  K21<m> := CyclotomicField(21);
+
+  // Initialises constants om = exp(2*pi*i/3), be = exp(2*pi*i/7)
+  om := m^7;
+  be := m^3;
+ 
+  // Initialises constant c = 1/sqrt(-7), im(c) = 1/sqrt(7)
+  // See [Theory and applications of finite groups, Miller-Blichfeldt-Dickson, 1916, page 251]
+  c := 1/7 * (be + be^2 + be^4 - be^3 - be^5 - be^6);
+
+  // Initialises the general linear group GL(3,K) with K = Q(m) as above  
+  GL3K := GeneralLinearGroup(3, K21);
+
+  // Generators
+  // Here we specify the generators of the groups as matrix elements in SL(3,K)
+  // s is a diagonal matrix of order 7
+  s := GL3K ! [be,0,0, 0,be^2,0, 0,0,be^4];
+  // t is a permutation matrix of order 3
+  t := GL3K ! [0,1,0, 0,0,1, 1,0,0];
+  // r is a matrix of order 2, an involution
+  r := GL3K ! [c*(be^4 - be^3),c*(be^2 - be^5),c*(be - be^6), c*(be^2 - be^5),c*(be - be^6),c*(be^4 - be^3), c*(be - be^6),c*(be^4 - be^3),c*(be^2 - be^5)];
+  // w is a scalar diagonal matrix of order 3, w = om*Id_3
+  w := GL3K ! [om,0,0, 0,om,0, 0,0,om];
+
+  // The unique simple group of order 168, isomorphic to PGL(3, F_2) and PSL(2, F_7),
+  // the group of orientation-preserving (rotational) symmetries of Klein's quartic curve (v*u^3 + w*v^3 + u*w^3 = 0)
+  // and to the group of automorphisms of the projective plane P^2(F_2) (a.k.a. the Fano plane)
+   // See http://math.ucr.edu/home/baez/klein.html for much more
+  I := MatrixGroup< 3, K21 | [s,t,r] >;
+  
+  // Group of order 504, isomorphic to the Cartesian product of GL(3,F_2) and a cyclic group with 3 elements
+  K := MatrixGroup< 3, K21 | I,w >;
+
+  return [I, K];
+end function;

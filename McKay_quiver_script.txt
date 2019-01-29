@@ -1,0 +1,98 @@
+/* This file contains source code for the Magma computer algebra system
+The code may be executed for free in the Magma calculator at http://magma.maths.usyd.edu.au/calc/
+This file uses the functions defined in the constructorfuncs file, 
+and can compute the adjacency matrix for the McKay quiver of a finite group 
+with respect to a given representation.
+*/
+
+// Sample Code
+// This code displays some of Magma's functionality as a computer algebra system
+
+// Construct a copy of the alternating group on 5 letters
+A5 := AlternatingGroup(5);
+
+// Confirm that the sporadic finite subgroup H of SL(3,C) is isomorphic to A_5,
+// whilst also providing a suggested isomorphism, i.e. a faithful representation
+IsIsomorphic(A5,SporadicGroupHJL()[1]);
+
+// Construct a copy of the finite subgroup E of SL(3,C) described in
+// [S.Yau and Y.Yu, Gorenstein Quotient Singularities in Dimension Three, 1993]
+// E subgroup F subgroup G form an ascending chain of normal subgroups
+// The group E is of order 108
+E := SporadicGroupEFG()[1];
+
+// Computes the character table of the finite group denoted E
+CharacterTable(E);
+
+// Computes the normal subgroup structure of the group E
+// E contains (proper nontrivial) normal subgroups of orders 3, 27, 54
+// which are denoted as groups A, C, D respectively in
+// [S.Yau and Y.Yu, Gorenstein Quotient Singularities in Dimension Three, 1993]
+NormalSubgroups(E);
+
+// Constructs a copy of the character table of the alternating group on 5 letters
+// and prints it to the display
+CT := CharacterTable(A5);
+CT;
+
+// Prints the row in the character table corresponding to irreducible character X.2
+// as a vector with entries determined by the character values on conjugacy classes
+CT[2];
+
+// Computes the character obtained by the tensor product of X.2 with itself
+// Recall that the character's value on the conjugacy class of the trivial group element
+// (i.e. the first entry) is equal to the dimension of the corresponding representation
+CT[2]*CT[2];
+
+// Computes the decomposition of the character X.2 tensor X.2 as a linear combination
+// of the irreducible characters (as they are a basis for the character ring)
+// Here X.2 * X.2 = X.1 + X.2 + X.5, with dimension count 3*3 = 9 = 1 + 3 + 5
+Decomposition(CT, CT[2]*CT[2]);
+
+// Construct a copy of the finite subgroup F of SL(3,C) described in
+// [S.Yau and Y.Yu, Gorenstein Quotient Singularities in Dimension Three, 1993]
+// E subgroup F subgroup G form an ascending chain of normal subgroups
+// The group F is of order 216
+F := SporadicGroupEFG()[2];
+
+// Computes the irreducible G-modules for the group F over the chosen field
+// i.e. the list of irreducible G-modules (representations) corresponding to
+// the irreducible characters in the same order as a[[ear in the character table
+IrrMods := IrreducibleModules(F, CyclotomicField(12));
+
+// Computes a choice of generators for the G-action/representation on the
+// 3-dimensional irreducible G-module rho_6 of the group F
+// We can compare this with our original construction of F by its
+// faithful representation of a subgroup of SL(3,C)
+ActionGenerators(IrrMods[6]);
+
+// This confirms that rho_6 is isomorphic as a group representation to
+// our preferred construction of F as a subgroup of SL(3,C)
+// Therefore, we can construct the canonical McKay quiver of F -
+// i.e. with respect to the preferred representation of F which
+// is given by the inclusion into SL(3,C) - based on calculations with X.6 
+// as a distinguished character within the character ring
+IsIsomorphic(F,ActionGroup(IrrMods[6]));
+
+// Having chosen a preferred representation/character for computing the McKay quiver
+// we compute its (truncated) adjacency matrix as a list of columns. This data can be exported
+// along with the character table to aid the drawing of the McKay quiver
+// in a more suitable medium/programming language. This code can be adapted to
+// work for any finite group that can be realized in Magma.
+// Thank goodness for for-loops and list comprehensions, which reduce the 
+// number of lines of code required.
+
+// Remember: For finite subgroups of SL(3,C), the preferred character we seek
+// will be 3-dimensional. Moreover, characters/representations which are dual (complex conjugate)
+// or related by a linear twist (obtainable by multiplication with a 1-dimensional character)
+// give rise to isomorphic McKay quivers, so this can help reduce the search space.
+
+// Note: We compute the truncated adjacency matrix because the trivial representation X.1
+// acts as the multiplicative identity in the representation ring. That is,
+// we exclude the trivial calculation rho * X.1 = rho, so start our for-loop from row 2
+// up to the size of the character table (number of irreps/conjugacy classes).
+I := SporadicGroupIK()[1];
+CT := CharacterTable(I);
+CT;
+adjacency_matrix := [[ x: x in Decomposition(CT, CT[2]*CT[i]) ] : i in [ 2..#CT ] ];
+adjacency_matrix;
