@@ -16,6 +16,8 @@ This repository includes:\
 - A file containing the source code from the above two all in one file\ 
   for the purpose of improving/impeding the ease of reading and use\
 - Character table outputs from running the code in the Magma calculator\
+- A licence\
+- This README file\
 
 Thanks to Prof. Miles Reid at the University of Warwick for supervising me on this\
 Undergraduate Research Support Scheme (URSS) in the summer of 2015,\
