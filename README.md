@@ -11,9 +11,9 @@ or simply as an elementary introduction to the Magma computer algebra system.
 This repository includes:
 - A file containing three functions which construct the groups in question.
 - A file containing sample code for experimenting with finite groups in Magma.\
-  In particular, once constructed, the adjacency matrix for the McKay quiver of a group\ 
+  In particular, once constructed, the adjacency matrix for the McKay quiver of a group 
   (with respect to a given representation) can be computed from character table data.
-- A file containing the source code from the above two all in one file\ 
+- A file containing the source code from the above two all in one file
   for the purpose of improving/impeding the ease of reading and use
 - Character table outputs from running the code in the Magma calculator
 - A licence
